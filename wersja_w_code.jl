@@ -27,7 +27,8 @@ function symulation(;
     initial_infected = 5,
     seed = 1410,
     hygiene_min = 0.4,
-    hygiene_max = 0.8)
+    hygiene_max = 0.8,
+    rng = MersenneTwister(1410))
 
     properties = @dict(
         infection_period,
@@ -35,10 +36,11 @@ function symulation(;
         reinfection_probability,
         death_rate,
         dt,
-        interaction_radius)
+        interaction_radius,
+        rng)
 
     space = ContinuousSpace((1,1), 0.02)
-    model = ABM(Agent,space, properties = properties, rng = MersenneTwister(seed)) 
+    model = ABM(Agent,space, properties = properties) 
 
     # Add agents to the model
     for id in 1:N
