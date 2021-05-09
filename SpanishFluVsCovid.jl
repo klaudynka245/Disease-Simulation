@@ -22,6 +22,7 @@ using Agents , Random , InteractiveDynamics , CairoMakie
 using DrWatson: @dict
 
 
+
 mutable struct Agent2 <: AbstractAgent
     id::Int
     pos::NTuple{2,Float64}
@@ -139,9 +140,9 @@ sir_model1 = symulation(reinfection_probability = r1)
 sir_model2 = symulation(reinfection_probability = r2)
 sir_model3 = symulation(reinfection_probability = r1)
 
-data1, _ = run!(sir_model1, agent_step!, model_step!, 2000; adata)
-data2, _ = run!(sir_model2, agent_step!, model_step!, 2000; adata)
-data3, _ = run!(sir_model3, agent_step!, model_step!, 2000; adata)
+data1, _ = run!(sir_model1, agent_step!, model_step!, 500; adata)
+data2, _ = run!(sir_model2, agent_step!, model_step!, 500; adata)
+data3, _ = run!(sir_model3, agent_step!, model_step!, 500; adata)
 
 data1[(end-10):end, :]
 
@@ -158,7 +159,7 @@ figure
 r4 = 0.04
 sir_model4 = symulation(reinfection_probability = r4, isolated = 0.8)
 
-data4, _ = run!(sir_model4, agent_step!, model_step!, 2000; adata)
+data4, _ = run!(sir_model4, agent_step!, model_step!, 500; adata)
 
 l4 = lines!(ax, data4[:, dataname((:status, infected))], color = :red)
 figure[1, 2] = Legend(
@@ -166,4 +167,6 @@ figure[1, 2] = Legend(
     [l1, l2, l3, l4],
     ["r=$r1", "r=$r2", "r=$r1", "r=$r4, social distancing"],
 )
+
+println("Już___________________________________________________________________")
 figure
