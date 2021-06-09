@@ -1,6 +1,6 @@
 using Agents , Random , InteractiveDynamics , CairoMakie 
 using DrWatson: @dict
-#using DataFrames , Plots
+using DataFrames , Plots
 
 
 mutable struct Agent2 <: AbstractAgent
@@ -143,14 +143,26 @@ function agent_step!(agent,model)
     quarantine_end!(agent,model)
 end
 
- sir_model = symulation(isolated = 0.8 )
- sir_colors(a) = a.status == :S ? "#000000" : a.status == :I ? "#ff0000" : a.status == :Q ? "#00FFFF" : "#00FF00"
+sir_model = symulation(isolated = 0.8 )
+sir_colors(a) = a.status == :S ? "#000000" : a.status == :I ? "#ff0000" : a.status == :Q ? "#00FFFF" : "#00FF00"
 println("Video")
- abm_video("vaccine.mp4",
- sir_model,
- agent_step!,
- model_step!,
- title = " Symulation",
- ac = sir_colors,
- frames = 500 , spf = 2, framerate = 25)
- println("Już___________________________________________________________________")
+
+x= 1000
+susceptible(x) = count(i == :S for i in x)
+recovered(x) = count(i == :R for i in x)
+infected(x) = count(i in [:I,:Q] for i in x)
+
+adata = [(:status, susceptible), (:status, recovered), (:status, infected)]   
+agents1_df, = run!(sir_model, agent_step!, model_step!, 1000; adata)
+println("Test")
+
+agents1_df |> show
+
+abm_video("vaccine.mp4",
+sir_model,
+agent_step!,
+model_step!,
+title = " Symulation",
+ac = sir_colors,
+frames = 25 , spf = 2, framerate = 25)
+println("Już___________________________________________________________________")
