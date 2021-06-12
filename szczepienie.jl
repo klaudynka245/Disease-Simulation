@@ -9,9 +9,13 @@ mutable struct Agent2 <: AbstractAgent
     vel::NTuple{2,Float64}
     mass::Float64
     days_infected::Int # how many days have passed after infection
-    status::Symbol # :S (susceptible), :I (infecious), :R (removed, immune), :Q (quarantine and infecious) :V (vaccinated)
+    status::Symbol # :S (susceptible), :I (infecious), :R (removed, immune), :Q (quarantine and infecious) :V (vaccinated and removed)
     days_quarantine::Int
     hygiene::Float64
+end
+
+function if_susceptible(agent::Agent2)
+    return agent.status == :S
 end
 
 
@@ -32,7 +36,8 @@ function symulation(;
     time_of_quarantine = 10,
     steps_per_day = 12,
     chance_to_go_quaratine = 0.5,
-    symulation_time = 0
+    symulation_time = 0,
+    vaccine_per_day = 2
     )
 
     infection_period *= steps_per_day
@@ -50,7 +55,9 @@ function symulation(;
         speed,
         chance_to_go_quaratine,
         steps_per_day,
-        symulation_time)
+        symulation_time,
+        N,
+        vaccine_per_day)
 
     space = ContinuousSpace((1,1), 0.02)
     model = ABM(Agent2,space, properties = properties, rng = MersenneTwister(seed))
@@ -86,7 +93,7 @@ function transmit!(a,b,reinfection,model)
     healthy.status = :I
 end
 
-function vaccine(a,model)
+function vaccine!(a,model)
     a.status = :V   
 end
 
@@ -96,17 +103,18 @@ function model_step!(model)
         transmit!(a,b,model.reinfection_probability,model)
         elastic_collision!(a, b, :mass)
     end
-    if model.symulation_time > 5
-        vaccination = 10
-        while vaccination > 0 
-            agent_id = 1
-            if model[agent_id].status == :S
-                vaccine(model[agent_id], model)
-                vaccination -= 1
-            else 
-                agent_id += 1
+    
+    if model.symulation_time % model.steps_per_day == 0
+        for _ in 1:model.vaccine_per_day
+            agent = random_agent(model, if_susceptible)
+            if agent != Nothing
+                vaccine!(agent, model)
+            else
+                model.symulation_time += 1
+                return
             end
         end
+       
     end
     model.symulation_time += 1
 end
@@ -160,3 +168,5 @@ abm_video("vaccine_0.8.mp4",
     title = " Symulation_vac",
     ac = sir_colors,
     frames = 500 , spf = 2, framerate = 25)
+
+println("Już___________________________________________")

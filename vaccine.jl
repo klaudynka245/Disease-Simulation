@@ -94,7 +94,7 @@ end
 
 function model_step!(model)
     r = model.interaction_radius
-    r2 = 1
+    r2 = 4 * r
     for (a, b) in interacting_pairs(model, r, :nearest)
         transmit!(a,b,model.reinfection_probability,model)
         elastic_collision!(a, b, :mass)
@@ -148,12 +148,7 @@ sir_colors(a) = a.status == :S ? "#000000" : a.status == :I ? "#ff0000" : a.stat
 println("Video")
 
 x= 1000
-susceptible(x) = count(i == :S for i in x)
-recovered(x) = count(i == :R for i in x)
-infected(x) = count(i in [:I,:Q] for i in x)
 
-adata = [(:status, susceptible), (:status, recovered), (:status, infected)]   
-agents1_df, = run!(sir_model, agent_step!, model_step!, 1000; adata)
 println("Test")
 
 agents1_df |> show
@@ -164,5 +159,5 @@ agent_step!,
 model_step!,
 title = " Symulation",
 ac = sir_colors,
-frames = 25 , spf = 2, framerate = 25)
+frames = 500 , spf = 2, framerate = 25)
 println("Już___________________________________________________________________")
