@@ -9,7 +9,7 @@ mutable struct Agent2 <: AbstractAgent
     vel::NTuple{2,Float64}
     mass::Float64
     days_infected::Int # how many days have passed after infection
-    status::Symbol # :S (susceptible), :I (infecious), :R (removed, immune), :Q (quarantine and infecious) :V (vaccinated and removed)
+    status::Symbol # :S (susceptible), :I (infectious), :R (removed, immune), :Q (quarantine and infectious) :V (vaccinated and removed)
     days_quarantine::Int
     hygiene::Float64
 end
@@ -23,7 +23,7 @@ function symulation(;
     infection_period = 24 ,
     detection_time = 14 ,
     reinfection_probability = 0.01,
-    isolated = 0.2, # 0 is nobody is isolated , 1 eve ryone is isolated
+    isolated = 0.2, # 0 is nobody is isolated , 1 everyone is isolated
     interaction_radius = 0.01,
     dt = 1,
     speed = 0.0012,
