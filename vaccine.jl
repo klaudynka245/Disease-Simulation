@@ -1,6 +1,6 @@
 using Agents , Random , InteractiveDynamics , CairoMakie 
 using DrWatson: @dict
-using DataFrames , Plots
+#using DataFrames , Plots
 
 
 mutable struct Agent2 <: AbstractAgent
@@ -25,7 +25,7 @@ function symulation(;
     dt = 1,
     speed = 0.0012,
     death_rate = 0.044,
-    N = 1000,
+    N = 200,
     initial_infected = 5,
     seed = 1410,
     hygiene_min = 0.4,
@@ -62,7 +62,7 @@ function symulation(;
         mass = is_isolated ? Inf : 1.0
         vel = is_isolated ? (0,0) : sincos(2pi* rand(model.rng,)) .* speed
         hygiene = (hygiene_max-hygiene_min)*rand(model.rng) + hygiene_min
-        carefull = id > 100 ? false : true
+        carefull = id > 0.1*N ? false : true
         add_agent!(pos,model,vel, mass, 0, status, 0, hygiene, carefull)
     end
     return model
@@ -94,7 +94,7 @@ end
 
 function model_step!(model)
     r = model.interaction_radius
-    r2 = 4 * r
+    r2 = 5*r
     for (a, b) in interacting_pairs(model, r, :nearest)
         transmit!(a,b,model.reinfection_probability,model)
         elastic_collision!(a, b, :mass)
@@ -142,22 +142,3 @@ function agent_step!(agent,model)
     quarantine!(agent,model)
     quarantine_end!(agent,model)
 end
-
-sir_model = symulation(isolated = 0.8 )
-sir_colors(a) = a.status == :S ? "#000000" : a.status == :I ? "#ff0000" : a.status == :Q ? "#00FFFF" : "#00FF00"
-println("Video")
-
-x= 1000
-
-println("Test")
-
-agents1_df |> show
-
-abm_video("vaccine.mp4",
-sir_model,
-agent_step!,
-model_step!,
-title = " Symulation",
-ac = sir_colors,
-frames = 500 , spf = 2, framerate = 25)
-println("Już___________________________________________________________________")
