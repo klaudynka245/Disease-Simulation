@@ -1,5 +1,6 @@
 using Agents , Random , InteractiveDynamics , CairoMakie 
 using DrWatson: @dict
+import Distributions: Categorical
 #using DataFrames , Plots
 
 
@@ -62,7 +63,7 @@ function symulation(;
         mass = is_isolated ? Inf : 1.0
         vel = is_isolated ? (0,0) : sincos(2pi* rand(model.rng,)) .* speed
         hygiene = (hygiene_max-hygiene_min)*rand(model.rng) + hygiene_min
-        carefull = id > 0.1*N ? false : true
+        carefull = rand(model.rng, Categorical([0.3*N,0.7*N])) == 1 ? true : false
         add_agent!(pos,model,vel, mass, 0, status, 0, hygiene, carefull)
     end
     return model
