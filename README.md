@@ -1,2 +1,2 @@
-#Projekt z Pakietów matematycznych 
-#temat: Rozwój choroby zakaźnej
+# Projekt z Pakietów matematycznych 
+# Temat: Rozwój choroby zakaźnej
